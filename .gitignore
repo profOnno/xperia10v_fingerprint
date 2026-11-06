@@ -1,0 +1,33 @@
+# Build/install artefacts
+*.o
+*.o.*
+*.a
+*.so.toc
+*.tgz
+*.tar.bz2
+*.log
+.mb2/
+out/
+installroot/
+RPMS/
+moc_*
+Makefile
+documentation.list
+droid-biometry-fp-0.0.0/
+file.list
+
+# Python
+__pycache__/
+*.pyc
+
+# Editors
+.vscode/
+.idea/
+*.swp
+
+# Built/release artefacts and Jolla proprietary overlay files
+dist/
+overlay/encsfa-fpd
+overlay/libsailfishdevicelock.so*
+overlay/jolla/
+overlay/SHA256SUMS

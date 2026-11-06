@@ -1,0 +1,30 @@
+// Sailfish OS fingerprint bridge for the LineageOS AIDL V4 HAL.
+//
+// This library is dlopen()ed by sailfish-fpd-community through libhybris and
+// exports the u_hardware_biometry_* C ABI declared in biometry.h.
+
+cc_library_shared {
+    name: "libbiometry_fp_api",
+    vendor: true,
+    srcs: [
+        "biometry_fp_aidl_for_hybris.cpp",
+    ],
+    local_include_dirs: ["."],
+    cflags: [
+        "-Wall",
+        "-Wno-unused-parameter",
+    ],
+    shared_libs: [
+        "android.hardware.biometrics.common-V4-ndk",
+        "android.hardware.biometrics.fingerprint-V4-ndk",
+        "android.hardware.gatekeeper@1.0",
+        "android.hardware.keymaster-V4-ndk",
+        "libbase",
+        "libbinder_ndk",
+        "libhardware",
+        "libhidlbase",
+        "libhidltransport",
+        "liblog",
+        "libutils",
+    ],
+}

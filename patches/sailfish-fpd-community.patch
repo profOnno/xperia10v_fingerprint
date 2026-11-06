@@ -1,0 +1,62 @@
+diff --git a/rpm/droid-biometry-fp.spec b/rpm/droid-biometry-fp.spec
+index 9198012..40ccad7 100644
+--- a/rpm/droid-biometry-fp.spec
++++ b/rpm/droid-biometry-fp.spec
+@@ -15,6 +15,7 @@ Source0:  droid-biometry-fp-0.0.0.tgz
+ %{summary}
+ 
+ %build
++rm -rf droid-biometry-fp-0.0.0
+ pwd
+ ls -lh
+ tar -xvf droid-biometry-fp-0.0.0.tgz
+diff --git a/rpm/sailfish-fpd-community.spec b/rpm/sailfish-fpd-community.spec
+index f372589..a640036 100644
+--- a/rpm/sailfish-fpd-community.spec
++++ b/rpm/sailfish-fpd-community.spec
+@@ -7,10 +7,9 @@ License:    LICENSE
+ URL:        http://example.org/
+ Source0:    %{name}-%{version}.tar.bz2
+ Requires:   droid-biometry-fp >= 1.0.0
++Requires:   libhybris
+ BuildRequires:  pkgconfig(Qt5Core)
+ BuildRequires:  pkgconfig(Qt5DBus)
+-BuildRequires:  desktop-file-utils
+-BuildRequires:  libhybris-devel
+ BuildRequires:  systemd
+ Provides:   sailfish-fpd
+ 
+diff --git a/sailfish-fpd-community.service b/sailfish-fpd-community.service
+index 898f234..2c258fe 100644
+--- a/sailfish-fpd-community.service
++++ b/sailfish-fpd-community.service
+@@ -6,6 +6,7 @@ After=dbus.socket
+ After=local-fs.target
+ After=droid-hal-init.service
+ After=droid-late-start.service
++After=wait_for_keymaster.service
+ Conflicts=shutdown.target
+ 
+ [Service]
+diff --git a/src/fpdcommunity.cpp b/src/fpdcommunity.cpp
+index c84a4dd..444e3f2 100644
+--- a/src/fpdcommunity.cpp
++++ b/src/fpdcommunity.cpp
+@@ -30,7 +30,7 @@ FPDCommunity::FPDCommunity()
+ 
+     // configure cancel timer
+     m_cancelTimer.setSingleShot(true);
+-    m_cancelTimer.setInterval(30000);
++    m_cancelTimer.setInterval(120000);
+     connect(&m_cancelTimer, &QTimer::timeout, this, &FPDCommunity::slot_cancelIdentify);
+ 
+     // set current user - nemo for now
+@@ -335,7 +335,7 @@ int FPDCommunity::Verify(const QDBusMessage &message)
+ 
+     if (m_state == FPSTATE_IDLE) {
+         setState(FPSTATE_VERIFYING);
+-        m_androidFP.enroll(100000); //nemo userID
++        m_androidFP.authenticate();
+         m_dbusCaller = caller;
+         emit EnrollProgressChanged(0);
+         return FPREPLY_STARTED;
